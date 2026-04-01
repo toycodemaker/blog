@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main
+  release:
+    types: [published]
 
 jobs:
   run-script:
@@ -25,5 +27,17 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: 创建输出文件夹
+        run: mkdir output
+
       - name: 运行 Python 脚本
         run: python main.py
+
+      - name: 打包 output 文件夹
+        run: zip -r output.zip output
+
+      - name: 上传产物到 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-folder
+          path: output/
